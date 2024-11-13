@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchTourGuideReview } from "../../../redux/guideReviewSlice";
 import { fetchTourGuideById } from "../../../redux/tourGuideSlice";
+import CustomNotFound from "../../../components/miniComponent/CustomNotFound";
 
 export default function ListReviewGuideScreen() {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ export default function ListReviewGuideScreen() {
         </TouchableOpacity>
 
         {/* list */}
-        {/* <ScrollView> */}
+        <ScrollView>
         <View>
           {tourGuideReview?.length > 0 ? (
             tourGuideReview?.map((ulasan) => (
@@ -75,11 +76,14 @@ export default function ListReviewGuideScreen() {
               />
             ))
           ) : (
-            <Text>Data tidak tersedia</Text>
+            <CustomNotFound
+              title={"Belum ada review untuk tour guide ini"}
+              customStyle={"mt-24"}
+            />
           )}
         </View>
 
-        {/* </ScrollView> */}
+        </ScrollView>
       </SafeAreaView>
     </ScrollView>
   );
