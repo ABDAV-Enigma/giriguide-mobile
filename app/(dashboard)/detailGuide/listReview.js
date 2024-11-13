@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchTourGuideReview } from "../../../redux/guideReviewSlice";
 import { fetchTourGuideById } from "../../../redux/tourGuideSlice";
-import CustomNotFound from "../../../components/miniComponent/CustomNotFound";
 
 export default function ListReviewGuideScreen() {
   const dispatch = useDispatch();
@@ -76,10 +75,7 @@ export default function ListReviewGuideScreen() {
               />
             ))
           ) : (
-            <CustomNotFound
-              title={"Belum ada review untuk tour guide ini"}
-              customStyle={"mt-24"}
-            />
+            <Text>Data tidak tersedia</Text>
           )}
         </View>
 
