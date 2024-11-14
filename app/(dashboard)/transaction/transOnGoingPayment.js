@@ -145,16 +145,23 @@ const TransactionOnGoingPaymentScreen = () => {
 
   const continueHandling = async() => {
     try {
-      await dispatch(getSnapTokenByTransactionId(id));
-      // console.log("Transaction Payment State:", transactionPayment);
-      // console.log("Redirect URL:", transactionPayment?.paymentResponse?.redirectUrl);
+      setLoading(true);
+      const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 10000)); // Promise untuk batas waktu 5 detik
+      const paymentPromise = dispatch(getSnapTokenByTransactionId(id));
+      
+      const result = await Promise.race([paymentPromise, timeoutPromise]);
 
-      setWebViewVisible(true); 
-      // if (transactionPayment?.paymentResponse?.redirectUrl) {
-      //   setWebViewVisible(true); 
-      // }
+      if (result && result.payload?.data?.paymentResponse?.redirectUrl) {
+        setSnapToken(result.payload.data.paymentResponse); // Menyimpan snapToken dari respons
+        setWebViewVisible(true); // Menampilkan WebView
+      } else {
+        console.warn("Respons pembayaran tidak diterima dalam 5 detik.");
+      }
+
     } catch (error) {
       console.error("Error saat memproses pembayaran:", error);
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -167,20 +174,26 @@ const TransactionOnGoingPaymentScreen = () => {
       //   console.log('Navigation canceled: already on the correct URL');
       //   return; // Exit the function, no further navigation happens
       // }
+      setWebViewVisible(false)
+      setLoading(true)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      setLoading(false)
 
       // console.log('ini navstate startswith jalan')
       const response = await dispatch(getSnapTokenByTransactionId(id));
       // console.log('ini response nya dapat nih: di bawah aiwaait dispatch', response.payload?.data?.paymentResponse)
-      const paymentStatus =
-        response.payload?.data?.paymentResponse?.PaymentStatus;
+      const paymentStatus = response.payload?.data?.paymentResponse?.PaymentStatus;
       // console.log('dapat nih response nya: ', paymentStatus)
       if (paymentStatus === "PAID") {
+        setWebViewVisible(false);
+        console.log('ini paymentstatus paid terbaca')
         router.replace("/transaction");
       } else if (paymentStatus === "PENDING") {
         setWebViewVisible(false);
-        // console.log('ini paymentstatus pending terbaca')
+        console.log('ini paymentstatus pending terbaca')
         router.push(`/transaction/transOnGoingPayment?id=${id}`);
       } else {
+        console.log('ini paymentstatus gadak terbaca')
         router.replace("/transaction");
       }
     }

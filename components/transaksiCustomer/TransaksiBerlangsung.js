@@ -74,16 +74,16 @@ const TransactionBerlangsung = ({
     }).format(amount);
   };
 
-  const isSameDate = (date1, date2) => {
-    const d1 = new Date(date1)
-    const d2 = new Date(date2)
-    return (
-      d1.getDate() === d2.getDate() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getFullYear() === d2.getFullYear()
-    );
+  const isWithinDateRange = (startDate, endDate) => {
+    const today = new Date(); 
+    today.setHours(0, 0, 0, 0)
+    const start = new Date(startDate);  
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(endDate); 
+    end.setHours(0, 0, 0, 0)
+    
+    return today >= start && today <= end;
   };
-  // console.log(isSameDate(timeNow, timeNow))
 
   const timeNow = new Date()
 
@@ -136,7 +136,7 @@ const TransactionBerlangsung = ({
               customElements={
                 item.transactionStatus === "UPCOMING" ? (
                   <View>
-                    {isSameDate(item.startDate, timeNow) && role === 'ROLE_CUSTOMER' &&
+                    {isWithinDateRange(item.startDate, item.endDate) && role === 'ROLE_CUSTOMER' &&
                       <>
                         <View className='my-5 h-[1] bg-borderCustom'></View>
                         <CustomButton
