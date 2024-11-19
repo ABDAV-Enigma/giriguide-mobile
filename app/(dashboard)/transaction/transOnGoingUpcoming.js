@@ -15,6 +15,7 @@ import { getTransactionHistoryByTransactionId } from '../../../redux/transaction
 
 const TransactionOnGoingUpcomingScreen = () => {
     const {id} = useLocalSearchParams()
+    // console.log(id)
     const dispatch = useDispatch();
 
     const transactionHistoryDetail = useSelector((state) => state.transaction.transactionHistoryDetail)
